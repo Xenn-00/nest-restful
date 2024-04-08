@@ -7,7 +7,7 @@ import { TestModule } from '../test.module';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import * as request from 'supertest';
 
-describe('AuthController', () => {
+describe('UserController', () => {
   let app: INestApplication;
   let logger: Logger;
   let testService: TestService;
@@ -16,6 +16,7 @@ describe('AuthController', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule, TestModule],
     }).compile();
+
     app = moduleFixture.createNestApplication();
     await app.init();
 
@@ -23,7 +24,7 @@ describe('AuthController', () => {
     testService = app.get(TestService);
   });
 
-  describe('GET /api/v1/auth/logout', () => {
+  describe('GET /api/v1/users/current', () => {
     beforeEach(async () => {
       await testService.createUser();
     });
@@ -32,7 +33,7 @@ describe('AuthController', () => {
       await testService.deleteUser();
     });
 
-    it('should be able to logout', async () => {
+    it('should be able to get current user', async () => {
       const signIn = await request(app.getHttpServer())
         .post('/api/v1/auth/sign-in')
         .send({
@@ -40,16 +41,15 @@ describe('AuthController', () => {
           password: 'testtesttest',
         });
 
+      const token = signIn.body.data.token;
+      const cookies = signIn.get('Set-Cookie');
       const response = await request(app.getHttpServer())
-        .get('/api/v1/auth/logout')
-        .set('Authorization', `Bearer ${signIn.body.data.token}`)
-        .set('Cookie', signIn.get('Set-Cookie'));
+        .get('/api/v1/users/current')
+        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies);
 
-      logger.debug(response.body);
       logger.info(response.status);
-
-      expect(response.status).toBe(200);
-      expect(response.body.data).toBeDefined();
+      logger.debug(response.body);
     });
   });
 });

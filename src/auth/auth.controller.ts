@@ -52,6 +52,7 @@ export class AuthController {
     res.cookie('refresh', response.refresh, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/api/v1/auth',
     });
     const authSignInResponse: AuthSignInResponse = {
       id: response.id,
@@ -75,6 +76,7 @@ export class AuthController {
     const response = await this.authService.logout(user['userId']);
     res.cookie('refresh', '', {
       maxAge: 0,
+      path: '/api/v1/auth',
     });
 
     return {
@@ -89,16 +91,13 @@ export class AuthController {
     @Req() req: Request,
   ): Promise<WebResponse<AuthRefreshResponse>> {
     const user = req.user;
-    this.logger.debug(user);
-    const cookies = req.cookies;
-    this.logger.debug(cookies);
-    // const response = await this.authService.refresh(user['userId'], cookies);
-    // this.logger.debug(user);
-    // const authRefreshResponse: AuthRefreshResponse = {
-    //   id: response.id,
-    //   username: response.username,
-    //   token: response.tokens,
-    // };
-    return null;
+    const cookies = req.cookies.refresh;
+    const response = await this.authService.refresh(user['userId'], cookies);
+    const authRefreshResponse: AuthRefreshResponse = {
+      id: response.id,
+      username: response.username,
+      token: response.tokens,
+    };
+    return { data: authRefreshResponse };
   }
 }
