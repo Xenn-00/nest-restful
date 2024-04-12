@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import * as request from 'supertest';
+import { TestService } from '../test.service';
 import { Logger } from 'winston';
+import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
 import { TestModule } from '../test.module';
-import { TestService } from '../test.service';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import * as request from 'supertest';
 
-describe('UserController', () => {
+describe('ContactController', () => {
   let app: INestApplication;
   let logger: Logger;
   let testService: TestService;
@@ -24,16 +24,16 @@ describe('UserController', () => {
     testService = app.get(TestService);
   });
 
-  describe('PATCH /api/v1/users/current/update', () => {
+  describe('POST /api/v1/contacts', () => {
     beforeEach(async () => {
       await testService.createUser();
     });
 
     afterEach(async () => {
-      await testService.deleteUser('newTest');
+      await testService.deleteUser();
     });
 
-    it('should be able to update user', async () => {
+    it('should be able to create new contact', async () => {
       const signIn = await request(app.getHttpServer())
         .post('/api/v1/auth/sign-in')
         .send({
@@ -45,21 +45,18 @@ describe('UserController', () => {
       const cookies = signIn.get('Set-Cookie');
 
       const response = await request(app.getHttpServer())
-        .patch('/api/v1/users/current/update')
+        .post('/api/v1/contacts')
         .set('Authorization', `Bearer ${token}`)
         .set('Cookie', cookies)
         .send({
-          username: 'newTest',
-          password: 'Wazxse34',
-          confirmPassword: 'Wazxse34',
-          name: 'newtest',
+          first_name: 'Fuma',
+          last_name: 'Zakko',
+          email: 'test@test.com',
+          phone: '+81232135453',
         });
-
       logger.info(response.status);
       logger.debug(response.body);
-
-      expect(response.status).toBe(200);
-      expect(response.body.data).toBeDefined();
+      logger.info(token);
     });
   });
 });

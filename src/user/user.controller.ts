@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { AccessGuard } from '../auth/guards/access.guard';
 import { Request } from 'express';
-import { WebResponse } from '../model/web.model';
-import { UserResponse, UserUpdateRequest } from '../model/user.model';
+import { WebResponse } from '../common/web.model';
+import { UserResponse, UserUpdateRequest } from './user.model';
 import { UserService } from './user.service';
 import { User } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';

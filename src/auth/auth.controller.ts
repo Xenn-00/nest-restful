@@ -18,8 +18,8 @@ import {
   AuthSignInResponse,
   SignInRequest,
   SignUpRequest,
-} from '../model/auth.model';
-import { WebResponse } from '../model/web.model';
+} from './auth.model';
+import { WebResponse } from '../common/web.model';
 import { AuthService } from './auth.service';
 import { AccessGuard } from './guards/access.guard';
 import { RefreshGuard } from './guards/refresh.guard';

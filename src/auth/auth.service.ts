@@ -4,11 +4,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { PrismaService } from '../common/prisma.serivce';
 import { ValidationService } from '../common/validation.service';
-import {
-  AuthResponse,
-  SignInRequest,
-  SignUpRequest,
-} from '../model/auth.model';
+import { AuthResponse, SignInRequest, SignUpRequest } from './auth.model';
 import { AuthValidation } from './auth.validation';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './types/payload.types';

@@ -29,7 +29,7 @@ model Token {
   user_id       String @unique
   refresh_token String @db.Text
 
-  user User @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("token")
 }
@@ -42,7 +42,7 @@ model Contact {
   email      String  @db.VarChar(128)
   phone      String? @db.VarChar(15)
 
-  user    User      @relation(fields: [user_id], references: [id])
+  user    User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Address Address[]
 
   @@map("contacts")
@@ -57,7 +57,7 @@ model Address {
   country     String  @db.VarChar(100)
   postal_code String  @db.VarChar(100)
 
-  contact Contact @relation(fields: [contact_id], references: [id])
+  contact Contact @relation(fields: [contact_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("addresses")
 }

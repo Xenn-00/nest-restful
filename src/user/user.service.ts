@@ -3,7 +3,7 @@ import { User } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { PrismaService } from '../common/prisma.serivce';
 import { ValidationService } from '../common/validation.service';
-import { UserResponse, UserUpdateRequest } from '../model/user.model';
+import { UserResponse, UserUpdateRequest } from './user.model';
 import { Logger } from 'winston';
 import { UserValidation } from './user.validation';
 import * as bcrypt from 'bcrypt';
