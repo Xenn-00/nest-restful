@@ -24,16 +24,16 @@ describe('ContactController', () => {
     testService = app.get(TestService);
   });
 
-  describe('POST /api/v1/contacts', () => {
+  describe('GET /api/v1/contacts/:contactId', () => {
     beforeEach(async () => {
-      await testService.createUser();
+      await testService.createContact();
     });
 
     afterEach(async () => {
       await testService.deleteUser();
     });
 
-    it('should be able to create new contact', async () => {
+    it('should be able get contacts', async () => {
       const signIn = await request(app.getHttpServer())
         .post('/api/v1/auth/sign-in')
         .send({
@@ -43,17 +43,12 @@ describe('ContactController', () => {
 
       const token = signIn.body.data.token;
       const cookies = signIn.get('Set-Cookie');
-
+      const contact = await testService.getContact();
       const response = await request(app.getHttpServer())
-        .post('/api/v1/contacts')
+        .get(`/api/v1/contacts/${contact.id}`)
         .set('Authorization', `Bearer ${token}`)
-        .set('Cookie', cookies)
-        .send({
-          first_name: 'Fuma',
-          last_name: 'Zakko',
-          email: 'test@test.com',
-          phone: '+81232135453',
-        });
+        .set('Cookie', cookies);
+
       logger.info(response.status);
       logger.debug(response.body);
 

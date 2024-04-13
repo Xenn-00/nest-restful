@@ -57,6 +57,14 @@ export class AuthService {
     if (!foundUser)
       throw new HttpException('username or password is invalid', 401);
 
+    const hasSignInBefore = await this.prismaService.token.findUnique({
+      where: {
+        user_id: foundUser.id,
+      },
+    });
+
+    if (hasSignInBefore) throw new HttpException('unexpected error occur', 403);
+
     const isPasswordValid = await bcrypt.compare(
       signInRequest.password,
       foundUser.password,
