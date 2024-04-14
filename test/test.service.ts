@@ -43,11 +43,96 @@ export class TestService {
       },
     });
   }
+  async createAddress() {
+    const createUser = await this.prismaService.user.create({
+      data: {
+        username: 'test',
+        password: await bcrypt.hash('testtesttest', 10),
+        name: 'test',
+      },
+    });
+
+    const createContact = await this.prismaService.contact.create({
+      data: {
+        user_id: createUser.id,
+        first_name: 'fuma',
+        last_name: 'zakko',
+        email: 'test@test.com',
+        phone: '+81232135453',
+      },
+    });
+
+    const data = {
+      street: 'test street',
+      city: 'test city',
+      province: 'test province',
+      country: 'test country',
+      postal_code: '51161',
+      ...{ contact_id: createContact.id },
+    };
+
+    await this.prismaService.address.create({
+      data: data,
+    });
+  }
+  async createAddressMany() {
+    const createUser = await this.prismaService.user.create({
+      data: {
+        username: 'test',
+        password: await bcrypt.hash('testtesttest', 10),
+        name: 'test',
+      },
+    });
+
+    const createContact = await this.prismaService.contact.create({
+      data: {
+        user_id: createUser.id,
+        first_name: 'fuma',
+        last_name: 'zakko',
+        email: 'test@test.com',
+        phone: '+81232135453',
+      },
+    });
+
+    const data: {
+      contact_id: string;
+      street: string;
+      city: string;
+      province: string;
+      country: string;
+      postal_code: string;
+    }[] = [];
+    for (let i = 1; i <= 10; i++) {
+      data.push({
+        contact_id: createContact.id,
+        street: `street test ${i}`,
+        city: `city test ${i}`,
+        province: `province test ${i}`,
+        country: `country test ${i}`,
+        postal_code: `77284${i}`,
+      });
+    }
+
+    await this.prismaService.address.createMany({
+      data: data,
+    });
+  }
 
   async getContact() {
     const response = await this.prismaService.contact.findFirst({
       where: {
         first_name: 'fuma',
+      },
+    });
+
+    return response;
+  }
+
+  async getAddress() {
+    const contact = await this.getContact();
+    const response = await this.prismaService.address.findFirst({
+      where: {
+        contact_id: contact.id,
       },
     });
 
